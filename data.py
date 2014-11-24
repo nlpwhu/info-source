@@ -1,0 +1,60 @@
+#!/usr/bin/python3
+#-*-coding:utf-8 -*-
+
+REGION = [{"region":"0", "regionname":"国内"},
+          {"region":"11","regionname":"北京市"},
+          {"region":"12","regionname":"天津市"},
+          {"region":"13","regionname":"河北省"},
+          {"region":"14","regionname":"山西省"},
+          {"region":"15","regionname":"内蒙古"},
+          {"region":"21","regionname":"辽宁省"},
+          {"region":"22","regionname":"吉林省"},
+          {"region":"23","regionname":"黑龙江省"},
+          {"region":"31","regionname":"上海市"},
+          {"region":"32","regionname":"江苏省"},
+          {"region":"33","regionname":"浙江省"},
+          {"region":"34","regionname":"安徽省"},
+          {"region":"35","regionname":"福建省"},
+          {"region":"36","regionname":"江西省"},
+          {"region":"37","regionname":"山东省"},
+          {"region":"41","regionname":"河南省"},
+          {"region":"42","regionname":"湖北省"},
+          {"region":"43","regionname":"湖南省"},
+          {"region":"44","regionname":"广东省"},
+          {"region":"45","regionname":"广西省"},
+          {"region":"46","regionname":"海南省"},
+          {"region":"50","regionname":"重庆市"},
+          {"region":"51","regionname":"四川省"},
+          {"region":"52","regionname":"贵州省"},
+          {"region":"53","regionname":"云南省"},
+          {"region":"54","regionname":"西藏"},
+          {"region":"61","regionname":"陕西省"},
+          {"region":"62","regionname":"甘肃省"},
+          {"region":"63","regionname":"青海省"},
+          {"region":"64","regionname":"宁夏回族自治区"},
+          {"region":"65","regionname":"新疆"},
+          {"region":"97","regionname":"亚洲"},
+          {"region":"98","regionname":"欧洲"},
+          {"region":"99","regionname":"北美洲"}]
+
+GROUP = [{"sourcegroup":1,"name":"汽车"},
+         {"sourcegroup":-1,"name":"其他"}]
+
+LEVEL = [{"level":1, "name":"境外英文"},  
+         {"level":2, "name":"境外中文"},  
+         {"level":3, "name":"国内中央"},  
+         {"level":4, "name":"国内省级"},  
+         {"level":5, "name":"国内地方"}]
+
+TYPE = [
+{"type":1 , "name":"新闻"},
+{"type":2 , "name":"社区"},
+{"type":3 , "name":"微博"},
+{"type":4 , "name":"博客"},
+{"type":5 , "name":"电子报刊"},
+{"type":6 , "name":"Twitter"},
+{"type":7 , "name":"微信"},
+{"type":8 , "name":"学术"},
+{"type":9 , "name":"视频"},
+{"type":10, "name":" 问答"},
+]
