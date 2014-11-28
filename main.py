@@ -3,6 +3,7 @@
 
 from post import Post
 from parser import Parse
+from config import USERNAME
 
 if __name__ == "__main__":
 
@@ -18,7 +19,7 @@ if __name__ == "__main__":
         exit()
 
     for item in items:
-        print("posting", item['url'])
+        print(USERNAME, "posting", item['websiteplate'], item['url'])
         r = p.post(item)
         print(r.content.decode("utf-8"))
         

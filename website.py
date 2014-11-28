@@ -1,12 +1,12 @@
 #-*-coding:utf-8 -*-
 
-
 import requests
 import re
 from functools import reduce
 
 from bs4 import BeautifulSoup
 from data import COLUMN, EXCLUDE_COLUMN
+from region_name import REGION_NAME
 from string import punctuation
 
 from utils import get_domain
@@ -25,7 +25,8 @@ PUNCTUATION = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~［］'
 class WebSite:
     def __init__(self, name, url):
         self.name = name
-        self.url = url
+        # self.url = url 
+        self.url = url.replace(' ','')  
         self.html = self.get_html()
         self.domain = get_domain(self.url) # e.g. stackoverflow.com
         self.base_url = self.get_base_url() # e.g. http://stackoverflow.com/
@@ -33,11 +34,6 @@ class WebSite:
         self.some_valid_links = self.get_some_valid_links()
 
         self.valid_links = self.get_all_valid_links()
-        # self.add_same_class_links()
-        # self.nav_links = self.get_nav_links()
-        # self.all_siblings = self.get_all_siblings()
-
-        self.excluded_class = set()
 
 
     def get_base_url(self):
@@ -56,94 +52,22 @@ class WebSite:
     # we will try to get more later
     def get_some_valid_links(self):
         some_valid_links = {link for link in self.all_links 
-                            if (link.valid() and link.name_in_column_set())}
+                            if (link.valid() and
+                                link.name_not_in_excluded_set() and
+                                link.name_in_column_set() or
+                                link.name_is_location())}
         return some_valid_links
 
 
     def get_all_valid_links(self):
         some_valid_links = self.get_some_valid_links()
-        same_class_links = self.get_all_same_class()
-        # all_siblings = self.get_all_siblings()
-        # return set(filter((lambda link: link.same_domain(self)),
-        #                    some_valid_links.union(same_class_links)
-        #                                    .union(all_siblings)))
-        return set(filter((lambda link: link.same_domain(self)),
-                           some_valid_links.union(same_class_links)))
-
-    
-    def extract_links_from_divs(self, divs):
-        # links = [div.find_all('a') for div in divs]
-        # # add links together, if no result, return empty list
-        # links = reduce(lambda x, y: x + y, links) if links else []
-        # links = {Link(link, self.base_url) for link in links}
-        # links = {link for link in links if link.valid() and link.same_domain(self)}
-
-        # return links
-
-        # pass in a list of links, check if all links satisfy the prerequisite
-        def links_all_valid(links,div):
-            for link in links:
-                if not (link.valid() and link.same_domain(self)):
-                    return False
-            return True
-
-        # return set(filter (lambda links: links_all_valid(links),
-        #                 map (lambda link: Link(link, self.base_url),
-        #                     map (lambda div: div.find_all('a'),
-        #                          divs))))
-
-        result = set()
-        explored = set()
-        for div in divs:
-            links = div.find_all('a') # a list of links
-            links = (Link(link, self.base_url) for link in links) # a tuple of Links
-            if links in explored:
-                continue
-            elif (links_all_valid(links, div)):
-                explored.update(set(links))
-                result.update(set(links))
-            else: # invalid
-                if (div.get('class')):
-                    self.excluded_class.update(tuple(div.get('class')))
-                return set()
-
-        return result
-
-    def get_nav_links(self):
-        # find divs that have 'nav' in the class name
-        divs = self.html.find_all("div", {"class" : re.compile('.*nav.*')})
-        return self.extract_links_from_divs(divs)
-
-    def get_siblings(self, link):
-        ancestor_having_class = link.parent
-
-        while (not ancestor_having_class.get('class')):
-            ancestor_having_class = ancestor_having_class.parent
-
-        class_ = ancestor_having_class.get('class')
-
-        # the class name has already been visited and also excluded
-        if tuple(class_) in self.excluded_class:
-            return set()
-        else:
-            divs = self.html.find_all(class_=class_)
-            return self.extract_links_from_divs(divs)
-
-    # there are some links not in the COLUMN set,
-    # but still should be recorded
-    # so we iterate the links, find the links that have the same class
-    def get_same_class_links(self, link):
-        if not link.class_:
-            return set() 
-        else:
-            divs = self.html.find_all(class_=link.class_)
-            return self.extract_links_from_divs(divs)
-
+        all_siblings = self.get_all_siblings()
+        links = set.union(some_valid_links, all_siblings)
+        return {link for link in links 
+                if link.same_domain(self) and link.name_not_in_excluded_set()}
+  
     def get_all_siblings(self):
-        return reduce(lambda x, y: x.union(self.get_siblings(y)), self.some_valid_links, set())
-        
-    def get_all_same_class(self):
-        return reduce(lambda x, y: x.union(self.get_same_class_links(y)), self.some_valid_links, set())
+        return reduce(lambda x, y: x.union(y.siblings()), self.some_valid_links, set())
 
 
 class Link:
@@ -153,6 +77,7 @@ class Link:
         self.href = self.get_href(link, base_url)
         self.domain = get_domain(self.href)
         self.parent = link.parent
+        self.base_url = base_url
 
     def __repr__(self):
         text = self.text if self.text else "wtf empty??"
@@ -162,15 +87,19 @@ class Link:
 
     def __eq__(self, other):
         if isinstance(other, Link):
-            return self.text == other.text and self.href == other.href
+            return (self.text == other.text and 
+                    self.href == other.href and
+                    self.parent == self.parent and
+                    self.class_ == other.class_)
         else:
             return False
 
     def __hash__(self):
-        return hash( (self.text, self.href) )
+        class_ = self.class_ if self.class_ else []
+        return hash( (self.text, self.href, tuple(class_)) )
 
     def get_text(self, link):
-        return re.sub(r'[\s\u3000]', r'', link.text)
+        return re.sub(r'[\s\u3000>·】【\[\]]', r'', link.text)
 
     def get_same_class_links(self, links):
         # if link has class attribute and is not " "(space)
@@ -194,6 +123,8 @@ class Link:
             return href
         elif ('//' in href):   
             return None
+        elif (href.startswith('/')):
+            return base_url[:-1] + href
         else:
             return base_url + href
 
@@ -213,21 +144,44 @@ class Link:
     # 4. name is in the column name set
     def name_valid(self):
         name = self.text
-        if (len(name) > 4 or
+        if (len(name) > 5 or
             len(name.strip()) < 2 or
-            any(p in name for p in PUNCTUATION) or # has_punctuation
-            any(column in name for column in EXCLUDE_COLUMN)): # name is excluded
+            any(p in name for p in PUNCTUATION)):
+            # any(column in name for column in EXCLUDE_COLUMN)): # name is excluded
             return False
-        else:
+        else:       
             return True
 
     def valid(self):
         return self.href_valid() and self.name_valid()
+
+    def name_is_location(self):
+        is_location = (self.text.endswith(('市','县','区','镇','村','乡')) or
+                       any(self.text in column for column in REGION_NAME))
+        return self.name_valid() and self.href_valid() and is_location
 
     def name_in_column_set(self):
         # return if there is a column that its name is contained
         # in the name given
         return any(column in self.text for column in COLUMN)
 
+    def name_not_in_excluded_set(self):
+        name = self.text
+        return all(column not in name for column in EXCLUDE_COLUMN)
+
     def same_domain(self, website):
         return self.domain in website.domain if self.domain else False
+
+    def siblings(self):
+        ancestor = self.parent
+        while(len(ancestor.find_all('a')) < 2):
+            ancestor = ancestor.parent
+
+        siblings = {Link(link, self.base_url) for link in ancestor.find_all('a')}
+
+        # if there is any invalid link in the siblings set,
+        # discard the sibling set
+        if all(link.valid() for link in siblings):
+            return siblings
+        else:
+            return set()
