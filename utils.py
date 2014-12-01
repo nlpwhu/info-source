@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from data import COLUMN, EXCLUDE_COLUMN
 from string import punctuation
 
-import all_regions
+from region_province_map import RegionProvinceMap
 
 import tldextract
 
@@ -15,9 +15,9 @@ import tldextract
 # 四平日报
 # 大兴安岭日报 1 4
 
-def get_location(filename):
+def get_location_info(filename):
     lines = [line.split() for line in open(filename)]
-    items = []
+    result = {}
     for item in lines:
         if not item: continue
         
@@ -30,17 +30,13 @@ def get_location(filename):
 
         location = name[start:end]
 
-        items.append(dict(name=name, location=location))
+        result[name] = dict(location=location, province=get_province(location))
     
-    return items
+    return result
 
+def get_province(region_name):
+    return RegionProvinceMap().get_province(region_name)
 
-def get_region(location_list):
-    # cities = all_regions.cities
-    # def has_location(district):
-    #     return district['name'] == location or 
-    # find the location in the dict
-    pass
 
 def get_domain(url):
     if not url:
@@ -49,3 +45,5 @@ def get_domain(url):
         extracted = tldextract.extract(url)
         return extracted.domain + extracted.suffix if extracted else None
 
+def merge_two_dicts(x, y):
+    return dict(list(x.items()) + list(y.items()))

@@ -18,8 +18,12 @@ if __name__ == "__main__":
         print("login failed")
         exit()
 
+    total = len(items)
+    count = 0
     for item in items:
+        print(count, "/", total)
         print(USERNAME, "posting", item['websiteplate'], item['url'])
         r = p.post(item)
         print(r.content.decode("utf-8"))
+        count += 1
         

@@ -25,7 +25,6 @@ PUNCTUATION = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~［］'
 class WebSite:
     def __init__(self, name, url):
         self.name = name
-        # self.url = url 
         self.url = url.replace(' ','')  
         self.html = self.get_html()
         self.domain = get_domain(self.url) # e.g. stackoverflow.com
