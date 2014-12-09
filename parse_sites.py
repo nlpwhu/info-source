@@ -112,7 +112,7 @@ if __name__ == "__main__":
 
     f = open('textfiles/result.csv', 'w+')
 
-    for line in readfile2('intermediate-result.txt'):
+    for line in readfile2('textfiles/intermediate-result.txt'):
         f.write(" ".join(line) + '\n')
     f.close()
 
