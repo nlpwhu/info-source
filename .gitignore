@@ -1,0 +1,9 @@
+*.pyc
+*.txt
+textfiles/*
+*.csv
+__pycache__/*
+*.txt
+*.csv
+*.zip
+*.txt
