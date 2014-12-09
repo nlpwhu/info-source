@@ -90,10 +90,10 @@ def readfile2(filename):
     return [add_type_and_group(line) for line in lines]
     
 if __name__ == "__main__":
-    websites = parse_file("textfiles/1208.txt")
+    websites = parse_file("textfiles/3.txt")
 
 
-    f = open('filee', 'a+')
+    f = open('textfiles/intermediate-result.txt', 'w+')
 
     count = 0
     total = len(websites)
@@ -110,9 +110,9 @@ if __name__ == "__main__":
     f.close()
 
 
-    f = open('fileee', 'w+')
+    f = open('textfiles/result.csv', 'w+')
 
-    for line in readfile2('filee'):
+    for line in readfile2('intermediate-result.txt'):
         f.write(" ".join(line) + '\n')
     f.close()
 
