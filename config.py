@@ -1,7 +1,5 @@
 # edit here and fill your own username and password
-# USERNAME = "htan"
-# PASSWORD = "htan28@nlplab"
-USERNAME = "prdu"
-PASSWORD = "prdu24@nlplab"
+USERNAME = "user"
+PASSWORD = "pass"
 
 FILENAME = "raw5.csv"
