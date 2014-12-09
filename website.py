@@ -152,7 +152,7 @@ class Link:
             return True
 
     def valid(self):
-        return self.href_valid() and self.name_valid()
+        return self.href_valid() and self.name_valid() or self.is_forum_url()
 
     def name_is_location(self):
         is_location = (self.text.endswith(('市','县','区','镇','村','乡')) or
@@ -170,6 +170,10 @@ class Link:
 
     def same_domain(self, website):
         return self.domain in website.domain if self.domain else False
+
+    def is_forum_url(self):
+        pattern = re.compile(r'forum-\d+-\d+')
+        return self.href and pattern.search(self.href)
 
     def siblings(self):
         ancestor = self.parent
