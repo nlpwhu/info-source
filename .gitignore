@@ -1,4 +1,6 @@
 *.pyc
+*.txt
+textfiles/*
 *.csv
 *.zip
 *.txt
