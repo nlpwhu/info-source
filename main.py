@@ -19,8 +19,8 @@ if __name__ == "__main__":
         exit()
 
     total = len(items)
-    count = 0
-    for item in items:
+    count = 2976
+    for item in items[2976:]:
         print(count, "/", total)
         print(USERNAME, "posting", item['websiteplate'], item['url'])
         r = p.post(item)
