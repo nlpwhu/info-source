@@ -81,16 +81,17 @@ def add_type_and_group(column):
 
     type_ = get_type(website_name, websiteplate, url)
     group = get_group(website_name, websiteplate)
-
+    print(column)
     return [location, level_name, group, website_name, type_, url, websiteplate]
 
 def readfile2(filename):
     # extract the line
     lines = [line.split() for line in open(filename)]
+
     return [add_type_and_group(line) for line in lines]
     
-# if __name__ == "__main__":
-def Parsesites():
+if __name__ == "__main__":
+# def Parsesites():
     websites = parse_file("1208.txt")
 
 

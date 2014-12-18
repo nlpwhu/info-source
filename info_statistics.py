@@ -8,7 +8,7 @@ ROWS = 1700
 
 def get_avg_download_times(info_id, p):
 	r = p.session.get(INFO_DETAILS, params={'id': info_id})
-	html = r.content.decode('utf-8')
+	html = r.content.decode('utf-8', 'ignore')
 	value_list_line = [x for x in html.split('\n') if 'var valueList =' in x][0]
 	lst = re.sub(r'var valueList =|[\r\t;]', r'', value_list_line)
 	valueList = eval(lst) # valueList = [.., ..]
@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
 	items = p.session.post(LIST,{'userid':USERID,'rows':ROWS})
 
-	res = items.content.decode('utf-8')
+	res = items.content.decode('utf-8', 'ignore')
 
 	infos = eval(res)['infos']
 

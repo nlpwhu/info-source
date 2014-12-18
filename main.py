@@ -4,18 +4,17 @@
 from post import Post
 from parsers import Parse
 from config import USERNAME 
-from parse_sites import Parsesites
+# from parse_sites import Parsesites
 
 
 if __name__ == "__main__":
 
-    Parsesites()
+    # Parsesites()
     items = Parse().items
 
     p = Post()
     
     login_response = p.logon().content.decode("utf-8")
-
     # if not valid login, exit
     if "我的录入" not in login_response:
         print("login failed")

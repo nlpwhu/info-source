@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 #-*-coding:utf-8 -*-
 
-from data import REGION, TYPE, LEVEL, GROUP
+from data import TYPE, LEVEL, GROUP, REGION
 from config import FILENAME
+from allRegions import ALL_REGIONS
 
 class Parse:
     def __init__(self):
@@ -14,13 +15,23 @@ class Parse:
         lines = [line.split() for line in open(FILENAME)]
         self.items = []
         for item in lines:
+            # print(item)
             if not item: continue # skip empty line
+            temitem = item[3].split("_")
+            if temitem.__len__() > 1:
 
-            new_item = dict(location   = item[0],
+                new_item = dict(location   = item[0],
                             level_name = item[1],
                             group_name = item[2],
-                            website    = item[3], 
+                            website    = temitem[0],
                             category   = item[4], 
+                            url        = item[5])
+            else:
+                new_item = dict(location   = item[0],
+                            level_name = item[1],
+                            group_name = item[2],
+                            website    = item[3],
+                            category   = item[4],
                             url        = item[5])
 
             # get the string of websiteplate
@@ -52,16 +63,27 @@ class Parse:
     def match_first_two_chars(self, str1, str2):
         return str1[0:2] == str2[0:2]
 
-    def exact_match(self, x, y): return x == y
+
+    def exact_match(self, x, y):
+        return x == y
 
     # search for an item
     def search(self, field, target, source, match_fun):
         res = [item for item in source if match_fun(item[field], target)]
-        return res[0] if res else None
+        # print(res[0])
+        if res.__len__() == 1:
+            return res[0]
+        else:
+            print("No Match or There is another same name city")
+            return None
 
     # add region name and region id to the items
     def add_region(self, item):
-        region = self.search('regionname', item['location'], REGION, self.match_first_two_chars)
+        region = self.search('regionname', item['location'], ALL_REGIONS, self.exact_match)
+
+        # region = {"regionname" : "", "region" : ""}
+        # region["regionname"] = item['location']
+        # region["region"] = ""
         item.update(region)
 
     # add type to the items

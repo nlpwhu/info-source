@@ -1,7 +1,7 @@
 # edit here and fill your own username and password
 # <<<<<<< HEAD
-# USERNAME = "user"
-# PASSWORD = "pass"
+# USERNAME = "pztu"
+# PASSWORD = "pztu21@nlplab"
 # =======
 USERNAME = "czhang"
 PASSWORD = "czhang23@nlplab"
