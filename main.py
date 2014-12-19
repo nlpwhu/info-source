@@ -22,10 +22,8 @@ if __name__ == "__main__":
     # start from a specific number
     if sys.argv.__len__() > 1:
         startFrom = int(sys.argv[1])
-        f = open('textfiles/intermediate-result.txt', 'a')
     else:
         startFrom = 0
-        f = open('textfiles/intermediate-result.txt', 'w+')
 
     count = startFrom
     total = len(items)
