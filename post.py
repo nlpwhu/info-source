@@ -6,6 +6,8 @@ from config import USERNAME, PASSWORD
 
 LOGON = "http://119.254.102.70:8080/crawler-source/logon.do"
 ADD = "http://119.254.102.70:8080/crawler-source/info/add.do"
+DEL = "http://119.254.102.70:8080/crawler-source/info/del.do"
+REGION = "http://119.254.102.70:8080/crawler-source/info/region.do"
 login_data = {'username':USERNAME,'password':PASSWORD}
 
 class Post:

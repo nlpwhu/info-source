@@ -39,9 +39,16 @@ class WebSite:
         return "{0.scheme}://{0.netloc}/".format(urlsplit(self.url))
 
     def get_html(self):
-        r = requests.get(self.url)
-        html = BeautifulSoup(r.content, from_encoding='GB18030')
-        return html
+
+        # try two times or ignore the error
+        try:
+            r = requests.get(self.url, timeout=3)
+            html = BeautifulSoup(r.content, from_encoding='GB18030')
+            return html
+        except:
+            return BeautifulSoup()
+
+        
 
     def get_all_links(self):
         links = {Link(link, self.base_url) for link in self.html.find_all('a')}
@@ -152,7 +159,7 @@ class Link:
             return True
 
     def valid(self):
-        return self.href_valid() and self.name_valid() or self.is_forum_url()
+        return self.href_valid() and self.name_valid() or (self.is_forum_url() and len(self.text.strip()) > 1)
 
     def name_is_location(self):
         is_location = (self.text.endswith(('市','县','区','镇','村','乡')) or

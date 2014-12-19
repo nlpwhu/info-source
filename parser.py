@@ -2,6 +2,7 @@
 #-*-coding:utf-8 -*-
 
 from data import REGION, TYPE, LEVEL, GROUP
+from allRegions import ALL_REGIONS
 from config import FILENAME
 
 class Parse:
@@ -52,16 +53,22 @@ class Parse:
     def match_first_two_chars(self, str1, str2):
         return str1[0:2] == str2[0:2]
 
-    def exact_match(self, x, y): return x == y
+    def exact_match(self, x, y): 
+        return x == y
 
     # search for an item
     def search(self, field, target, source, match_fun):
         res = [item for item in source if match_fun(item[field], target)]
-        return res[0] if res else None
+
+        if res:
+            return res[0]
+        else:
+            print(target ,"No Match or There is another same name city")
+            return None
 
     # add region name and region id to the items
     def add_region(self, item):
-        region = self.search('regionname', item['location'], REGION, self.match_first_two_chars)
+        region = self.search('regionname', item['location'], ALL_REGIONS, self.exact_match)
         item.update(region)
 
     # add type to the items

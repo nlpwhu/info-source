@@ -4,6 +4,7 @@ from utils import get_location_info, merge_two_dicts
 from website import WebSite
 from data import CAR
 import re
+import sys
 
 def parse_file(filename):
     # newspaper_info = get_location_info(filename)
@@ -77,12 +78,15 @@ def get_group(website_name, websiteplate):
 # column format: 
 # 上海 国内省级 搜狐上海 http://cul.sohu.com/ 文化
 def add_type_and_group(column):
-    location, level_name, website_name, url, websiteplate = tuple(column)
+    if column.__len__() == 5:
+        location, level_name, website_name, url, websiteplate = tuple(column)
 
-    type_ = get_type(website_name, websiteplate, url)
-    group = get_group(website_name, websiteplate)
+        type_ = get_type(website_name, websiteplate, url)
+        group = get_group(website_name, websiteplate)
 
-    return [location, level_name, group, website_name, type_, url, websiteplate]
+        return [location, level_name, group, website_name, type_, url, websiteplate]
+    else:
+        return []
 
 def readfile2(filename):
     # extract the line
@@ -90,14 +94,20 @@ def readfile2(filename):
     return [add_type_and_group(line) for line in lines]
     
 if __name__ == "__main__":
-    websites = parse_file("textfiles/3.txt")
 
+    websites = parse_file("textfiles/1216.csv")
 
-    f = open('textfiles/intermediate-result.txt', 'w+')
+    # start from a specific number
+    if sys.argv.__len__() > 1:
+        startFrom = int(sys.argv[1])
+        f = open('textfiles/intermediate-result.txt', 'a')
+    else:
+        startFrom = 0
+        f = open('textfiles/intermediate-result.txt', 'w+')
 
-    count = 0
+    count = startFrom
     total = len(websites)
-    for s in websites:
+    for s in websites[startFrom:]:
         columns = get_all_columns(s)
 
         print(count, "/", total)
@@ -110,10 +120,11 @@ if __name__ == "__main__":
     f.close()
 
 
-    f = open('textfiles/result.csv', 'w+')
+    f = open('textfiles/1216result.csv', 'w+')
 
     for line in readfile2('textfiles/intermediate-result.txt'):
-        f.write(" ".join(line) + '\n')
+        if line:
+            f.write(" ".join(line) + '\n')
     f.close()
 
 

@@ -4,6 +4,7 @@
 from post import Post
 from parser import Parse
 from config import USERNAME
+import sys
 
 if __name__ == "__main__":
 
@@ -18,9 +19,17 @@ if __name__ == "__main__":
         print("login failed")
         exit()
 
+    # start from a specific number
+    if sys.argv.__len__() > 1:
+        startFrom = int(sys.argv[1])
+        f = open('textfiles/intermediate-result.txt', 'a')
+    else:
+        startFrom = 0
+        f = open('textfiles/intermediate-result.txt', 'w+')
+
+    count = startFrom
     total = len(items)
-    count = 2976
-    for item in items[2976:]:
+    for item in items[count:]:
         print(count, "/", total)
         print(USERNAME, "posting", item['websiteplate'], item['url'])
         r = p.post(item)
